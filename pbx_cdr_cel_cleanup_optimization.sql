@@ -66,10 +66,7 @@ CREATE TABLE `cdr_new` (
 	INDEX `uniqueid` (`uniqueid`) USING BTREE,
 	INDEX `did` (`did`) USING BTREE,
 	INDEX `recordingfile` (`recordingfile`(191)) USING BTREE
-)
-COLLATE='utf8mb4_unicode_ci'
-ENGINE=InnoDB
-;
+);
 -- Drop any existing temporary CEL table to avoid conflicts
 DROP TABLE IF EXISTS `cel_new`;
 
@@ -99,10 +96,7 @@ CREATE TABLE `cel_new` (
 	INDEX `uniqueid_index` (`uniqueid`) USING BTREE,
 	INDEX `linkedid_index` (`linkedid`) USING BTREE,
 	INDEX `context_index` (`context`) USING BTREE
-)
-COLLATE='utf8mb4_unicode_ci'
-ENGINE=InnoDB
-;
+);
 
 -- Insert filtered data from the old CDR table into the new CDR table
 INSERT INTO cdr_new (calldate, clid, src, dst, dcontext, `channel`, dstchannel, lastapp, lastdata, 
