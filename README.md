@@ -24,9 +24,11 @@ The script's primary purpose is to:
 
 2. **Table Creation**:
    - The script creates new tables (`cdr_new` and `cel_new`) with the same structure as the original `cdr` and `cel` tables. These tables will store the filtered data.
+   - Using the `CREATE TABLE ... LIKE` syntax guarantees that any future schema changes to `cdr` or `cel` are mirrored in the new tables without manual adjustments.
 
 3. **Data Insertion**:
    - Records from the original tables are copied into the new tables, filtered by the defined retention period.
+   - To speed up this initial transfer and avoid locking the busy `cdr` and `cel` tables, the script temporarily sets the transaction isolation level to `READ UNCOMMITTED`.
    - The script includes fallback mechanisms to handle edge cases where expected data might not be present, ensuring that the process remains robust and complete.
 
 4. **Final Data Synchronization**:
@@ -62,6 +64,12 @@ The script uses transactions to ensure that the operations are atomic, meaning e
 3. **Verification**:
    - After running the script, verify that the new tables (`cdr` and `cel`) are populated with the expected data.
    - Check that no data has been lost and that the old tables (`cdr_old` and `cel_old`) have been dropped.
+
+## Further Improvement Suggestions
+
+- Disable binary logging during the bulk insert phase if replication is not required to reduce I/O overhead.
+- Consider temporarily disabling indexes or using `ALTER TABLE ... DISABLE KEYS` on large tables to improve bulk insert performance, then re-enabling them afterwards.
+- Evaluate table partitioning for extremely large datasets to simplify future maintenance and improve query speed.
 
 ## Contribution
 
