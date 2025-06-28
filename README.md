@@ -27,6 +27,7 @@ The script's primary purpose is to:
 
 3. **Data Insertion**:
    - Records from the original tables are copied into the new tables, filtered by the defined retention period.
+   - To speed up this initial transfer and avoid locking the busy `cdr` and `cel` tables, the script temporarily sets the transaction isolation level to `READ UNCOMMITTED`.
    - The script includes fallback mechanisms to handle edge cases where expected data might not be present, ensuring that the process remains robust and complete.
 
 4. **Final Data Synchronization**:

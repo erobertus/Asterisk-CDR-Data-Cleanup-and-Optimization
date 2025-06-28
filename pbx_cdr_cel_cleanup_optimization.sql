@@ -70,6 +70,14 @@ CREATE TABLE `cdr_new` (
 -- Drop any existing temporary CEL table to avoid conflicts
 DROP TABLE IF EXISTS `cel_new`;
 
+-- ---------------------------------------------------------------------------
+-- Speed up the initial data transfer by allowing non-locking reads
+-- ---------------------------------------------------------------------------
+-- Switch to READ UNCOMMITTED so that data can be copied without acquiring
+-- shared locks on the source tables. This improves performance when the
+-- CDR/CEL tables are large and actively written to.
+SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+
 -- Create a new temporary CEL table with the same structure as the original
 CREATE TABLE `cel_new` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
@@ -158,6 +166,11 @@ FROM cel_new;
 
 -- Display the maximum sequence and ID for verification
 SELECT @cdr_max_seq, @cel_max_id;
+
+-- ---------------------------------------------------------------------------
+-- Restore the default isolation level for the remaining operations
+-- ---------------------------------------------------------------------------
+SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ;
 
 -- Start a transaction to ensure atomicity of the final data insertion and table renaming
 START TRANSACTION;
