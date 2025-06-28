@@ -32,41 +32,7 @@ SET @monthsToLookBack = 6;
 -- Drop any existing temporary CDR table to avoid conflicts
 DROP TABLE IF EXISTS cdr_new;
 
--- Create a new temporary CDR table with the same structure as the original
-CREATE TABLE `cdr_new` (
-	`calldate` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
-	`clid` VARCHAR(80) NOT NULL DEFAULT '' COLLATE 'utf8mb4_unicode_ci',
-	`src` VARCHAR(80) NOT NULL DEFAULT '' COLLATE 'utf8mb4_unicode_ci',
-	`dst` VARCHAR(80) NOT NULL DEFAULT '' COLLATE 'utf8mb4_unicode_ci',
-	`dcontext` VARCHAR(80) NOT NULL DEFAULT '' COLLATE 'utf8mb4_unicode_ci',
-	`channel` VARCHAR(80) NOT NULL DEFAULT '' COLLATE 'utf8mb4_unicode_ci',
-	`dstchannel` VARCHAR(80) NOT NULL DEFAULT '' COLLATE 'utf8mb4_unicode_ci',
-	`lastapp` VARCHAR(80) NOT NULL DEFAULT '' COLLATE 'utf8mb4_unicode_ci',
-	`lastdata` VARCHAR(80) NOT NULL DEFAULT '' COLLATE 'utf8mb4_unicode_ci',
-	`duration` INT(11) NOT NULL DEFAULT '0',
-	`billsec` INT(11) NOT NULL DEFAULT '0',
-	`disposition` VARCHAR(45) NOT NULL DEFAULT '' COLLATE 'utf8mb4_unicode_ci',
-	`amaflags` INT(11) NOT NULL DEFAULT '0',
-	`accountcode` VARCHAR(20) NOT NULL DEFAULT '' COLLATE 'utf8mb4_unicode_ci',
-	`uniqueid` VARCHAR(32) NOT NULL DEFAULT '' COLLATE 'utf8mb4_unicode_ci',
-	`userfield` VARCHAR(255) NOT NULL DEFAULT '' COLLATE 'utf8mb4_unicode_ci',
-	`did` VARCHAR(50) NOT NULL DEFAULT '' COLLATE 'utf8mb4_unicode_ci',
-	`recordingfile` VARCHAR(255) NOT NULL DEFAULT '' COLLATE 'utf8mb4_unicode_ci',
-	`cnum` VARCHAR(80) NOT NULL DEFAULT '' COLLATE 'utf8mb4_unicode_ci',
-	`cnam` VARCHAR(80) NOT NULL DEFAULT '' COLLATE 'utf8mb4_unicode_ci',
-	`outbound_cnum` VARCHAR(80) NOT NULL DEFAULT '' COLLATE 'utf8mb4_unicode_ci',
-	`outbound_cnam` VARCHAR(80) NOT NULL DEFAULT '' COLLATE 'utf8mb4_unicode_ci',
-	`dst_cnam` VARCHAR(80) NOT NULL DEFAULT '' COLLATE 'utf8mb4_unicode_ci',
-	`linkedid` VARCHAR(32) NOT NULL DEFAULT '' COLLATE 'utf8mb4_unicode_ci',
-	`peeraccount` VARCHAR(80) NOT NULL DEFAULT '' COLLATE 'utf8mb4_unicode_ci',
-	`sequence` INT(11) NOT NULL DEFAULT '0',
-	INDEX `calldate` (`calldate`) USING BTREE,
-	INDEX `dst` (`dst`) USING BTREE,
-	INDEX `accountcode` (`accountcode`) USING BTREE,
-	INDEX `uniqueid` (`uniqueid`) USING BTREE,
-	INDEX `did` (`did`) USING BTREE,
-	INDEX `recordingfile` (`recordingfile`(191)) USING BTREE
-);
+CREATE TABLE `cdr_new` LIKE `cdr`;
 -- Drop any existing temporary CEL table to avoid conflicts
 DROP TABLE IF EXISTS `cel_new`;
 
@@ -78,33 +44,7 @@ DROP TABLE IF EXISTS `cel_new`;
 -- CDR/CEL tables are large and actively written to.
 SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 
--- Create a new temporary CEL table with the same structure as the original
-CREATE TABLE `cel_new` (
-	`id` INT(11) NOT NULL AUTO_INCREMENT,
-	`eventtype` VARCHAR(30) NOT NULL COLLATE 'utf8mb4_unicode_ci',
-	`eventtime` DATETIME NOT NULL,
-	`cid_name` VARCHAR(80) NOT NULL COLLATE 'utf8mb4_unicode_ci',
-	`cid_num` VARCHAR(80) NOT NULL COLLATE 'utf8mb4_unicode_ci',
-	`cid_ani` VARCHAR(80) NOT NULL COLLATE 'utf8mb4_unicode_ci',
-	`cid_rdnis` VARCHAR(80) NOT NULL COLLATE 'utf8mb4_unicode_ci',
-	`cid_dnid` VARCHAR(80) NOT NULL COLLATE 'utf8mb4_unicode_ci',
-	`exten` VARCHAR(80) NOT NULL COLLATE 'utf8mb4_unicode_ci',
-	`context` VARCHAR(80) NOT NULL COLLATE 'utf8mb4_unicode_ci',
-	`channame` VARCHAR(80) NOT NULL COLLATE 'utf8mb4_unicode_ci',
-	`appname` VARCHAR(80) NOT NULL COLLATE 'utf8mb4_unicode_ci',
-	`appdata` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_unicode_ci',
-	`amaflags` INT(11) NOT NULL,
-	`accountcode` VARCHAR(20) NOT NULL COLLATE 'utf8mb4_unicode_ci',
-	`uniqueid` VARCHAR(32) NOT NULL COLLATE 'utf8mb4_unicode_ci',
-	`linkedid` VARCHAR(32) NOT NULL COLLATE 'utf8mb4_unicode_ci',
-	`peer` VARCHAR(80) NOT NULL COLLATE 'utf8mb4_unicode_ci',
-	`userdeftype` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_unicode_ci',
-	`extra` VARCHAR(512) NOT NULL COLLATE 'utf8mb4_unicode_ci',
-	PRIMARY KEY (`id`) USING BTREE,
-	INDEX `uniqueid_index` (`uniqueid`) USING BTREE,
-	INDEX `linkedid_index` (`linkedid`) USING BTREE,
-	INDEX `context_index` (`context`) USING BTREE
-);
+CREATE TABLE `cel_new` LIKE `cel`;
 
 -- Insert filtered data from the old CDR table into the new CDR table
 INSERT INTO cdr_new (calldate, clid, src, dst, dcontext, `channel`, dstchannel, lastapp, lastdata, 
